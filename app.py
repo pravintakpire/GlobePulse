@@ -19,7 +19,7 @@ import requests
 
 
 # wide streamlit format
-st.set_page_config(layout='wide')
+st.set_page_config(page_title='GlobePulse', page_icon='🌍', layout='wide')
 
 # read text from index.txt
 with open('index.html', 'r') as file:
@@ -168,8 +168,20 @@ if st.session_state['logged_in']:
                 "https://arstechnica.com/cars/2024/05/chaos-at-tesla-what-analysts-think-about-elon-musks-cuts-and-layoffs/"
                 ]
 
-        # set openai api key
-        os.environ["OPENAI_API_KEY"] = st.secrets["openai_credentials"]["API_KEY"]
+        # set openai api key (fall back to env var; degrade gracefully if missing)
+        try:
+            api_key = st.secrets["openai_credentials"]["API_KEY"]
+        except Exception:
+            api_key = os.environ.get("OPENAI_API_KEY")
+
+        if not api_key:
+            st.warning(
+                "Chatbot disabled: set `[openai_credentials] API_KEY` in "
+                "`.streamlit/secrets.toml` or the `OPENAI_API_KEY` environment variable."
+            )
+            st.stop()
+
+        os.environ["OPENAI_API_KEY"] = api_key
 
         bot = functions.load_bot(urls)
         query_config = BaseLlmConfig(number_documents=1)
