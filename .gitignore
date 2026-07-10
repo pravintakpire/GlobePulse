@@ -24,3 +24,15 @@ users.json
 *.log
 .claude/
 
+# Environment files
+.env
+.env.*
+
+# Credentials & Service Accounts
+*credentials*.json
+*service-account*.json
+*secret*.json
+firebase-key.json
+gcp-key.json
+
+

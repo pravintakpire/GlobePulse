@@ -5,11 +5,48 @@ import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from google.antigravity import Agent, LocalAgentConfig, types
+from google.antigravity.hooks import policy
 from pipeline import TopicSentimentSchema
 from backend.agents.tools import fetch_news_tool, get_stock_history_tool
 
 # Setup API Key configuration
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 1. Try loading from .env file in root
+if not GEMINI_API_KEY:
+    env_path = os.path.join(base_dir, ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        if k == "GEMINI_API_KEY" or k == "GOOGLE_API_KEY":
+                            os.environ[k] = v
+                            GEMINI_API_KEY = v
+        except Exception:
+            pass
+
+# 2. Try reading from .streamlit/secrets.toml as secondary fallback
+if not GEMINI_API_KEY:
+    secrets_path = os.path.join(base_dir, ".streamlit", "secrets.toml")
+    if os.path.exists(secrets_path):
+        try:
+            import tomllib
+            with open(secrets_path, "rb") as f:
+                secrets = tomllib.load(f)
+            GEMINI_API_KEY = (
+                secrets.get("gemini_credentials", {}).get("API_KEY") or 
+                secrets.get("gemini", {}).get("api_key") or
+                secrets.get("gemini_credentials", {}).get("api_key")
+            )
+        except Exception:
+            pass
 
 # Expose credentials to ensure Agent config can read them automatically
 if GEMINI_API_KEY:
@@ -66,9 +103,30 @@ orchestrator_config = LocalAgentConfig(
         "Coordinate their execution based on the user's questions. State what sub-agents "
         "you are delegating tasks to."
     ),
+    tools=[fetch_news_tool, get_stock_history_tool],
+    policies=[policy.allow_all()],
     capabilities=types.CapabilitiesConfig(
         enable_subagents=True
     ),
+    subagents=[
+        types.SubagentConfig(
+            name="ResearchAgent",
+            description="Fetches, filters, and parses news from specified sources.",
+            system_instructions=research_agent_config.system_instructions,
+            tools=[fetch_news_tool]
+        ),
+        types.SubagentConfig(
+            name="SentimentAnalyst",
+            description="Analyzes article text and returns structured sentiment scores for financial topics.",
+            system_instructions=sentiment_analyst_config.system_instructions
+        ),
+        types.SubagentConfig(
+            name="MarketCorrelator",
+            description="Retrieves stock price history and correlates movements with news sentiment.",
+            system_instructions=correlator_config.system_instructions,
+            tools=[get_stock_history_tool]
+        )
+    ],
     model="gemini-2.5-flash"
 )
 
@@ -89,3 +147,21 @@ class AgentSession:
         if self.orchestrator_agent is not None:
             await self.orchestrator_agent.__aexit__(None, None, None)
             self.orchestrator_agent = None
+
+async def get_orchestrator_response(user_message: str, chat_history: list = None):
+    """Utility function to get response from Orchestrator Agent.
+    Creates an ephemeral Agent session, chats, and returns the response.
+    """
+    agent = Agent(orchestrator_config)
+    await agent.__aenter__()
+    try:
+        response = await agent.chat(user_message)
+        # We must keep the context entered to allow streaming. 
+        # The caller is responsible for close, or we return the response.
+        # But wait: if we exit the context, response thoughts/tokens won't be streamable!
+        # So we return the agent and response, or we stream it here.
+        return agent, response
+    except Exception as e:
+        await agent.__aexit__(None, None, None)
+        raise e
+

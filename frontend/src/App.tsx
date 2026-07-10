@@ -4,6 +4,7 @@ import { ChartPanel } from './components/ChartPanel';
 import { Heatmap } from './components/Heatmap';
 import { AgentChat } from './components/AgentChat';
 import { LogOut, User, Lock, Mail, ChevronRight, TrendingUp, Sparkles, BarChart2 } from 'lucide-react';
+import { API_URL } from './config';
 
 interface UserInfo {
   email: string;
@@ -17,6 +18,7 @@ function App() {
   const [selectedTicker, setSelectedTicker] = useState<string>('Tesla');
   const [heatmapData, setHeatmapData] = useState<any[]>([]);
   const [loadingHeatmap, setLoadingHeatmap] = useState<boolean>(false);
+  const [alerts, setAlerts] = useState<any[]>([]);
 
   // Auth States
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
@@ -28,18 +30,31 @@ function App() {
   const [phone, setPhone] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  // Fetch heatmap data whenever user or their watchlist changes
+  // Fetch heatmap data and alerts whenever user or their watchlist changes
   useEffect(() => {
     if (user) {
       fetchHeatmapData();
+      fetchAlerts();
     }
   }, [user]);
+
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/alerts`);
+      if (res.ok) {
+        const data = await res.json();
+        setAlerts(data || []);
+      }
+    } catch (e) {
+      console.error("Error loading alerts", e);
+    }
+  };
 
   const fetchHeatmapData = async () => {
     if (!user) return;
     setLoadingHeatmap(true);
     try {
-      const res = await fetch(`http://localhost:8000/api/sentiment/heatmap?email=${encodeURIComponent(user.email)}`);
+      const res = await fetch(`${API_URL}/api/sentiment/heatmap?email=${encodeURIComponent(user.email)}`);
       if (res.ok) {
         const data = await res.json();
         setHeatmapData(data || []);
@@ -55,7 +70,7 @@ function App() {
     e.preventDefault();
     setErrorMsg('');
     try {
-      const res = await fetch('http://localhost:8000/api/login', {
+      const res = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -83,7 +98,7 @@ function App() {
       return;
     }
     try {
-      const res = await fetch('http://localhost:8000/api/signup', {
+      const res = await fetch(`${API_URL}/api/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -293,6 +308,29 @@ function App() {
 
         {/* Dashboard Panels Layout */}
         <main className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-6 p-6 overflow-y-auto">
+          {/* Active Alerts Banner */}
+          {alerts.length > 0 && alerts.some(alert => user.watchlist.includes(alert.ticker)) && (
+            <div className="xl:col-span-3 space-y-3">
+              {alerts
+                .filter(alert => user.watchlist.includes(alert.ticker))
+                .map((alert, idx) => (
+                  <div key={idx} className="bg-red-950/40 border border-red-500/30 rounded-lg p-4 text-rose-300 text-xs flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="text-base">⚠️</span>
+                      <span>
+                        <strong>Critical Sentiment Alert:</strong> {alert.ticker} has experienced a negative sentiment drop! (Average Sentiment: {alert.average_sentiment})
+                      </span>
+                    </div>
+                    {alert.timestamp && (
+                      <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
+                        {new Date(alert.timestamp * 1000).toLocaleString()}
+                      </span>
+                    )}
+                  </div>
+                ))}
+            </div>
+          )}
+
           {/* Main Visuals (2/3 width on large screens) */}
           <div className="xl:col-span-2 space-y-6">
             {/* Stock and Daily Sentiment Chart */}

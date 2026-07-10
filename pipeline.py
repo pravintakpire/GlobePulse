@@ -14,18 +14,46 @@ from typing import Optional
 # Setup API Key configuration
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
-# Load keys from Streamlit secrets.toml if not already set in environment
-secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".streamlit", "secrets.toml")
-if os.path.exists(secrets_path):
-    try:
-        import tomllib
-        with open(secrets_path, "rb") as f:
-            secrets = tomllib.load(f)
-        if not GEMINI_API_KEY:
-            # check both gemini_credentials -> API_KEY and simple gemini -> api_key
-            GEMINI_API_KEY = secrets.get("gemini_credentials", {}).get("API_KEY") or secrets.get("gemini", {}).get("api_key")
-    except Exception as e:
-        print(f"Warning: Could not read secrets from secrets.toml: {e}")
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+# 1. Try loading from .env file in root
+if not GEMINI_API_KEY:
+    env_path = os.path.join(base_dir, ".env")
+    if os.path.exists(env_path):
+        try:
+            with open(env_path, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if line and not line.startswith("#") and "=" in line:
+                        k, v = line.split("=", 1)
+                        k = k.strip()
+                        v = v.strip().strip("'\"")
+                        if k == "GEMINI_API_KEY" or k == "GOOGLE_API_KEY":
+                            os.environ[k] = v
+                            GEMINI_API_KEY = v
+        except Exception:
+            pass
+
+# 2. Load keys from Streamlit secrets.toml as fallback
+if not GEMINI_API_KEY:
+    secrets_path = os.path.join(base_dir, ".streamlit", "secrets.toml")
+    if os.path.exists(secrets_path):
+        try:
+            import tomllib
+            with open(secrets_path, "rb") as f:
+                secrets = tomllib.load(f)
+            GEMINI_API_KEY = (
+                secrets.get("gemini_credentials", {}).get("API_KEY") or 
+                secrets.get("gemini", {}).get("api_key") or
+                secrets.get("gemini_credentials", {}).get("api_key")
+            )
+        except Exception as e:
+            print(f"Warning: Could not read secrets from secrets.toml: {e}")
+
+# Expose credentials to ensure client library can read them automatically
+if GEMINI_API_KEY:
+    os.environ["GEMINI_API_KEY"] = GEMINI_API_KEY
+    os.environ["GOOGLE_API_KEY"] = GEMINI_API_KEY
 
 # Define structured output schema for Topic Sentiment
 class TopicSentimentSchema(BaseModel):

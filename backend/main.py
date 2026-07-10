@@ -26,7 +26,12 @@ app = FastAPI(title="GlobePulse API Backend")
 # Setup CORS to allow React Frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify frontend domain e.g., ["http://localhost:5173"]
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:5174"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -230,17 +235,41 @@ def trigger_pipeline(background_tasks: BackgroundTasks, ticker: Optional[str] = 
     background_tasks.add_task(pipeline.run_pipeline, ticker)
     return {"status": "started", "message": "Scraper pipeline running in background"}
 
+def load_local_alerts():
+    paths = [
+        os.path.join('db', 'alerts.json'),
+        os.path.join('backend', 'db', 'alerts.json')
+    ]
+    for p in paths:
+        if os.path.exists(p):
+            try:
+                with open(p, 'r') as f:
+                    return json.load(f)
+            except Exception:
+                pass
+    return []
+
 @app.get("/api/alerts")
 def get_alerts():
     alerts = []
     try:
-        # Fetch up to 20 recent alerts from Firestore
-        docs = database.db.collection("alerts").order_by("timestamp", direction="DESCENDING").limit(20).stream()
-        for doc in docs:
-            alerts.append(doc.to_dict())
+        if database.db is not None:
+            # Fetch up to 20 recent alerts from Firestore
+            docs = database.db.collection("alerts").order_by("timestamp", direction="DESCENDING").limit(20).stream()
+            for doc in docs:
+                alerts.append(doc.to_dict())
     except Exception as e:
         logger.error(f"Error fetching alerts from Firestore: {e}")
+        
+    if not alerts:
+        try:
+            alerts = load_local_alerts()
+            alerts = sorted(alerts, key=lambda x: x.get('timestamp', ''), reverse=True)[:20]
+        except Exception as e:
+            logger.error(f"Error loading local alerts: {e}")
+            
     return alerts
+
 
 # --- WebSocket Chat Endpoint (Antigravity Agent) ---
 
