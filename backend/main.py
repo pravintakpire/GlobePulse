@@ -294,7 +294,31 @@ def get_alerts():
     if not alerts:
         try:
             alerts = load_local_alerts()
-            alerts = sorted(alerts, key=lambda x: x.get('timestamp', ''), reverse=True)[:20]
+            def get_sort_key(x):
+                ts = x.get('timestamp')
+                if ts is None:
+                    return 0.0
+                if isinstance(ts, (int, float)):
+                    return float(ts)
+                if hasattr(ts, 'timestamp'):
+                    try:
+                        return float(ts.timestamp())
+                    except Exception:
+                        pass
+                if hasattr(ts, 'seconds'):
+                    return float(ts.seconds)
+                if isinstance(ts, str):
+                    try:
+                        return float(ts)
+                    except ValueError:
+                        pass
+                    try:
+                        import datetime
+                        return float(datetime.datetime.fromisoformat(ts.replace('Z', '+00:00')).timestamp())
+                    except Exception:
+                        pass
+                return 0.0
+            alerts = sorted(alerts, key=get_sort_key, reverse=True)[:20]
         except Exception as e:
             logger.error(f"Error loading local alerts: {e}")
             

@@ -56,7 +56,7 @@ async def check_watchlist_sentiment(ctx: TriggerContext):
                         "ticker": ticker,
                         "average_sentiment": round(avg_sentiment, 2),
                         "message": f"Critical sentiment drop detected for {ticker}: {round(avg_sentiment, 2)}",
-                        "timestamp": datetime.datetime.now().isoformat()
+                        "timestamp": int(datetime.datetime.now().timestamp())
                     })
         except Exception as e:
             logger.error(f"Error checking sentiment for {ticker} in watchdog: {e}")
