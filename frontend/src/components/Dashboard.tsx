@@ -12,6 +12,20 @@ interface DashboardProps {
   email: string;
 }
 
+const formatAlertDate = (timestamp: any) => {
+  if (!timestamp) return '';
+  const num = Number(timestamp);
+  if (!isNaN(num) && num > 0) {
+    const ms = num < 99999999999 ? num * 1000 : num;
+    return new Date(ms).toLocaleString();
+  }
+  const parsed = Date.parse(timestamp);
+  if (!isNaN(parsed)) {
+    return new Date(parsed).toLocaleString();
+  }
+  return String(timestamp);
+};
+
 export function Dashboard({ email }: DashboardProps) {
   const [watchlist, setWatchlist] = useState<string[]>([]);
   const [stocksData, setStocksData] = useState<Stock[]>([]);
@@ -194,7 +208,7 @@ export function Dashboard({ email }: DashboardProps) {
                 </div>
                 {alert.timestamp && (
                   <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
-                    {new Date(alert.timestamp * 1000).toLocaleString()}
+                    {formatAlertDate(alert.timestamp)}
                   </span>
                 )}
               </div>

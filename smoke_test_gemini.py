@@ -1,7 +1,7 @@
 import os
 import sys
 
-def test_key():
+def run_smoke_test():
     GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
 
     secrets_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".streamlit", "secrets.toml")
@@ -74,4 +74,4 @@ def test_key():
         print(f"\n❌ API Call Failed: {e}")
 
 if __name__ == "__main__":
-    test_key()
+    run_smoke_test()
