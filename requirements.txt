@@ -12,3 +12,17 @@ pydantic-settings
 yahooquery
 websockets
 google-cloud-firestore
+
+# Local development
+.globepulse.pids
+
+# Local Firebase
+firebase-debug.log
+firestore-debug.log
+
+# Python
+.venv/
+__pycache__/
+
+# Node
+node_modules/
