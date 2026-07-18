@@ -103,10 +103,9 @@ def login(req: LoginRequest):
     if email_key not in users:
         raise HTTPException(status_code=400, detail="User does not exist")
         
-    stored_hash = users[email_key].get("password_hash")
-    entered_hash = functions.hash_password(req.password)
+    stored_hash = users[email_key].get("password_hash", "")
     
-    if stored_hash != entered_hash:
+    if not functions.verify_password(req.password, stored_hash):
         raise HTTPException(status_code=400, detail="Incorrect password")
         
     user_info = users[email_key]
@@ -261,7 +260,9 @@ def get_stock_history_api(ticker: str = Query(...), period: str = Query("30d")):
     }
 
 @app.post("/api/pipeline/run")
-def trigger_pipeline(background_tasks: BackgroundTasks, ticker: Optional[str] = None):
+def trigger_pipeline(background_tasks: BackgroundTasks, ticker: Optional[str] = None, admin_key: Optional[str] = Query(None)):
+    if admin_key != "admin_secret_123":
+        raise HTTPException(status_code=403, detail="Unauthorized")
     background_tasks.add_task(pipeline.run_pipeline, ticker)
     return {"status": "started", "message": "Scraper pipeline running in background"}
 
@@ -369,11 +370,13 @@ async def chat_websocket(websocket: WebSocket):
                 logger.info("WebSocket chat connection closed.")
                 break
             except Exception as e:
-                logger.error(f"WebSocket error: {e}")
+                import uuid
+                err_id = str(uuid.uuid4())
+                logger.error(f"WebSocket error [{err_id}]: {e}")
                 try:
                     await websocket.send_json({
                         "type": "error",
-                        "content": f"An error occurred: {str(e)}"
+                        "content": f"An internal error occurred. Ref: {err_id}"
                     })
                 except Exception:
                     pass
