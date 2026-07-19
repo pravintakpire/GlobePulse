@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import database
 import functions
 import pipeline
+from config import settings
 from google.antigravity import Agent, LocalAgentConfig
 from backend.agents.orchestrator import orchestrator_config
 
@@ -261,7 +262,14 @@ def get_stock_history_api(ticker: str = Query(...), period: str = Query("30d")):
 
 @app.post("/api/pipeline/run")
 def trigger_pipeline(background_tasks: BackgroundTasks, ticker: Optional[str] = None, admin_key: Optional[str] = Query(None)):
-    if admin_key != "admin_secret_123":
+    # ADMIN_KEY must be provided via environment variables.
+    # Never commit secrets to source control.
+    actual_admin_key = settings.admin_key or os.getenv("ADMIN_KEY")
+    if not actual_admin_key:
+        logger.error("Configuration Error: ADMIN_KEY is not set.")
+        raise HTTPException(status_code=500, detail="Server configuration error")
+        
+    if admin_key != actual_admin_key:
         raise HTTPException(status_code=403, detail="Unauthorized")
     background_tasks.add_task(pipeline.run_pipeline, ticker)
     return {"status": "started", "message": "Scraper pipeline running in background"}
