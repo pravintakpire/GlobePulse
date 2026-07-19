@@ -3,8 +3,6 @@ import { Send, Terminal, ChevronDown, ChevronUp, User, Activity } from 'lucide-r
 
 import { WS_URL } from '../config';
 
-import { WS_URL } from '../config';
-
 interface Message {
   role: 'user' | 'assistant';
   content: string;
