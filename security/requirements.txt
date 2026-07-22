@@ -1,0 +1,6 @@
+# GlobePulse Security Framework Dependencies
+# Compatible with Python 3.12+
+
+packaging>=23.0
+pyyaml>=6.0
+rich>=13.0.0

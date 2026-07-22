@@ -1,0 +1,93 @@
+{
+  "title": "GlobePulse Security Analysis Report",
+  "timestamp": "2026-07-22 19:01:11 UTC",
+  "summary": {
+    "total_findings": 8,
+    "critical": 1,
+    "high": 2,
+    "medium": 2,
+    "low": 3
+  },
+  "findings": [
+    {
+      "scanner": "SecretScanner",
+      "rule_id": "SEC-008",
+      "severity": "HIGH",
+      "file_path": ".env",
+      "line_number": 1,
+      "description": "Generic Password / Secret Assignment detected in .env:1",
+      "snippet": "Detected match: *****",
+      "recommendation": "Potential hardcoded password/secret assignment. Ensure value is populated from os.getenv()."
+    },
+    {
+      "scanner": "SecretScanner",
+      "rule_id": "SEC-008",
+      "severity": "HIGH",
+      "file_path": ".env.example",
+      "line_number": 1,
+      "description": "Generic Password / Secret Assignment detected in .env.example:1",
+      "snippet": "Detected match: *****",
+      "recommendation": "Potential hardcoded password/secret assignment. Ensure value is populated from os.getenv()."
+    },
+    {
+      "scanner": "CodeScanner (Firestore Rules)",
+      "rule_id": "COD-013",
+      "severity": "CRITICAL",
+      "file_path": "firestore.rules",
+      "line_number": 11,
+      "description": "Permissive Firestore security rule: unconditionally allowing operations ('if true;')",
+      "snippet": "allow read, write: if true;",
+      "recommendation": "Enforce authentication and resource checks (e.g. 'if request.auth != null;')."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-005",
+      "severity": "LOW",
+      "file_path": "smoke_test_gemini.py",
+      "line_number": 38,
+      "description": "Gemini GenerativeModel instantiated without explicit safety_settings",
+      "snippet": "model = genai.GenerativeModel(target_model)",
+      "recommendation": "Explicitly configure safety_settings (e.g., HARASSMENT, HATE_SPEECH thresholds) on GenerativeModel initialization."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-005",
+      "severity": "LOW",
+      "file_path": "pipeline.py",
+      "line_number": 155,
+      "description": "Gemini GenerativeModel instantiated without explicit safety_settings",
+      "snippet": "model = genai.GenerativeModel(settings.agent_model)",
+      "recommendation": "Explicitly configure safety_settings (e.g., HARASSMENT, HATE_SPEECH thresholds) on GenerativeModel initialization."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-003",
+      "severity": "MEDIUM",
+      "file_path": "pipeline.py",
+      "line_number": 176,
+      "description": "Unsafe JSON parsing of LLM response without try/except handling",
+      "snippet": "result = json.loads(response.text)",
+      "recommendation": "Wrap model JSON parsing in a try/except block to gracefully handle malformed or injected model outputs."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-005",
+      "severity": "LOW",
+      "file_path": "backend/pipeline.py",
+      "line_number": 150,
+      "description": "Gemini GenerativeModel instantiated without explicit safety_settings",
+      "snippet": "model = genai.GenerativeModel(settings.agent_model)",
+      "recommendation": "Explicitly configure safety_settings (e.g., HARASSMENT, HATE_SPEECH thresholds) on GenerativeModel initialization."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-003",
+      "severity": "MEDIUM",
+      "file_path": "backend/pipeline.py",
+      "line_number": 171,
+      "description": "Unsafe JSON parsing of LLM response without try/except handling",
+      "snippet": "result = json.loads(response.text)",
+      "recommendation": "Wrap model JSON parsing in a try/except block to gracefully handle malformed or injected model outputs."
+    }
+  ]
+}

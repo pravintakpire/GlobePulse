@@ -1,0 +1,603 @@
+{
+  "title": "GlobePulse Security Analysis Report",
+  "timestamp": "2026-07-22 19:06:22 UTC",
+  "summary": {
+    "total_findings": 59,
+    "critical": 1,
+    "high": 2,
+    "medium": 33,
+    "low": 23
+  },
+  "findings": [
+    {
+      "scanner": "SecretScanner",
+      "rule_id": "SEC-008",
+      "severity": "HIGH",
+      "file_path": ".env",
+      "line_number": 1,
+      "description": "Generic Password / Secret Assignment detected in .env:1",
+      "snippet": "Detected match: *****",
+      "recommendation": "Potential hardcoded password/secret assignment. Ensure value is populated from os.getenv()."
+    },
+    {
+      "scanner": "SecretScanner",
+      "rule_id": "SEC-008",
+      "severity": "HIGH",
+      "file_path": ".env.example",
+      "line_number": 1,
+      "description": "Generic Password / Secret Assignment detected in .env.example:1",
+      "snippet": "Detected match: *****",
+      "recommendation": "Potential hardcoded password/secret assignment. Ensure value is populated from os.getenv()."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 1,
+      "description": "Unpinned Python dependency: 'fastapi'",
+      "snippet": "fastapi",
+      "recommendation": "Pin specific exact version using '==' (e.g. fastapi==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 2,
+      "description": "Unpinned Python dependency: 'uvicorn'",
+      "snippet": "uvicorn",
+      "recommendation": "Pin specific exact version using '==' (e.g. uvicorn==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 3,
+      "description": "Unpinned Python dependency: 'google-antigravity'",
+      "snippet": "google-antigravity",
+      "recommendation": "Pin specific exact version using '==' (e.g. google-antigravity==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 4,
+      "description": "Unpinned Python dependency: 'pydantic'",
+      "snippet": "pydantic",
+      "recommendation": "Pin specific exact version using '==' (e.g. pydantic==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 5,
+      "description": "Unpinned Python dependency: 'pandas'",
+      "snippet": "pandas",
+      "recommendation": "Pin specific exact version using '==' (e.g. pandas==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 6,
+      "description": "Unpinned Python dependency: 'numpy'",
+      "snippet": "numpy",
+      "recommendation": "Pin specific exact version using '==' (e.g. numpy==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 7,
+      "description": "Unpinned Python dependency: 'requests'",
+      "snippet": "requests",
+      "recommendation": "Pin specific exact version using '==' (e.g. requests==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 8,
+      "description": "Unpinned Python dependency: 'beautifulsoup4'",
+      "snippet": "beautifulsoup4",
+      "recommendation": "Pin specific exact version using '==' (e.g. beautifulsoup4==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 9,
+      "description": "Unpinned Python dependency: 'googlenewsdecoder'",
+      "snippet": "googlenewsdecoder",
+      "recommendation": "Pin specific exact version using '==' (e.g. googlenewsdecoder==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 10,
+      "description": "Unpinned Python dependency: 'google-generativeai'",
+      "snippet": "google-generativeai",
+      "recommendation": "Pin specific exact version using '==' (e.g. google-generativeai==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 11,
+      "description": "Unpinned Python dependency: 'pydantic-settings'",
+      "snippet": "pydantic-settings",
+      "recommendation": "Pin specific exact version using '==' (e.g. pydantic-settings==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 12,
+      "description": "Unpinned Python dependency: 'yahooquery'",
+      "snippet": "yahooquery",
+      "recommendation": "Pin specific exact version using '==' (e.g. yahooquery==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 13,
+      "description": "Unpinned Python dependency: 'websockets'",
+      "snippet": "websockets",
+      "recommendation": "Pin specific exact version using '==' (e.g. websockets==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "requirements.txt",
+      "line_number": 14,
+      "description": "Unpinned Python dependency: 'google-cloud-firestore'",
+      "snippet": "google-cloud-firestore",
+      "recommendation": "Pin specific exact version using '==' (e.g. google-cloud-firestore==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "security/requirements.txt",
+      "line_number": 4,
+      "description": "Unpinned Python dependency: 'packaging>=23.0'",
+      "snippet": "packaging>=23.0",
+      "recommendation": "Pin specific exact version using '==' (e.g. packaging==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "security/requirements.txt",
+      "line_number": 5,
+      "description": "Unpinned Python dependency: 'pyyaml>=6.0'",
+      "snippet": "pyyaml>=6.0",
+      "recommendation": "Pin specific exact version using '==' (e.g. pyyaml==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "security/requirements.txt",
+      "line_number": 6,
+      "description": "Unpinned Python dependency: 'rich>=13.0.0'",
+      "snippet": "rich>=13.0.0",
+      "recommendation": "Pin specific exact version using '==' (e.g. rich==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 1,
+      "description": "Unpinned Python dependency: 'fastapi'",
+      "snippet": "fastapi",
+      "recommendation": "Pin specific exact version using '==' (e.g. fastapi==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 2,
+      "description": "Unpinned Python dependency: 'uvicorn'",
+      "snippet": "uvicorn",
+      "recommendation": "Pin specific exact version using '==' (e.g. uvicorn==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 3,
+      "description": "Unpinned Python dependency: 'google-antigravity'",
+      "snippet": "google-antigravity",
+      "recommendation": "Pin specific exact version using '==' (e.g. google-antigravity==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 4,
+      "description": "Unpinned Python dependency: 'pydantic'",
+      "snippet": "pydantic",
+      "recommendation": "Pin specific exact version using '==' (e.g. pydantic==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 5,
+      "description": "Unpinned Python dependency: 'pandas'",
+      "snippet": "pandas",
+      "recommendation": "Pin specific exact version using '==' (e.g. pandas==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 6,
+      "description": "Unpinned Python dependency: 'numpy'",
+      "snippet": "numpy",
+      "recommendation": "Pin specific exact version using '==' (e.g. numpy==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 7,
+      "description": "Unpinned Python dependency: 'requests'",
+      "snippet": "requests",
+      "recommendation": "Pin specific exact version using '==' (e.g. requests==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 8,
+      "description": "Unpinned Python dependency: 'beautifulsoup4'",
+      "snippet": "beautifulsoup4",
+      "recommendation": "Pin specific exact version using '==' (e.g. beautifulsoup4==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 9,
+      "description": "Unpinned Python dependency: 'googlenewsdecoder'",
+      "snippet": "googlenewsdecoder",
+      "recommendation": "Pin specific exact version using '==' (e.g. googlenewsdecoder==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 10,
+      "description": "Unpinned Python dependency: 'google-generativeai'",
+      "snippet": "google-generativeai",
+      "recommendation": "Pin specific exact version using '==' (e.g. google-generativeai==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 11,
+      "description": "Unpinned Python dependency: 'yahooquery'",
+      "snippet": "yahooquery",
+      "recommendation": "Pin specific exact version using '==' (e.g. yahooquery==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 12,
+      "description": "Unpinned Python dependency: 'websockets'",
+      "snippet": "websockets",
+      "recommendation": "Pin specific exact version using '==' (e.g. websockets==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 13,
+      "description": "Unpinned Python dependency: 'google-cloud-firestore'",
+      "snippet": "google-cloud-firestore",
+      "recommendation": "Pin specific exact version using '==' (e.g. google-cloud-firestore==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-001",
+      "severity": "MEDIUM",
+      "file_path": "backend/requirements.txt",
+      "line_number": 14,
+      "description": "Unpinned Python dependency: 'pydantic-settings'",
+      "snippet": "pydantic-settings",
+      "recommendation": "Pin specific exact version using '==' (e.g. pydantic-settings==1.0.0) to prevent supply chain risks."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'lucide-react': '^1.23.0'",
+      "snippet": "\"lucide-react\": \"^1.23.0\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'react': '^19.2.7'",
+      "snippet": "\"react\": \"^19.2.7\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'react-dom': '^19.2.7'",
+      "snippet": "\"react-dom\": \"^19.2.7\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'recharts': '^3.9.2'",
+      "snippet": "\"recharts\": \"^3.9.2\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'date-fns': '^4.4.0'",
+      "snippet": "\"date-fns\": \"^4.4.0\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'motion': '^12.23.24'",
+      "snippet": "\"motion\": \"^12.23.24\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'tailwind-merge': '^3.6.0'",
+      "snippet": "\"tailwind-merge\": \"^3.6.0\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in dependencies: 'clsx': '^2.1.1'",
+      "snippet": "\"clsx\": \"^2.1.1\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: '@tailwindcss/postcss': '^4.3.2'",
+      "snippet": "\"@tailwindcss/postcss\": \"^4.3.2\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: '@types/node': '^24.13.2'",
+      "snippet": "\"@types/node\": \"^24.13.2\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: '@types/react': '^19.2.17'",
+      "snippet": "\"@types/react\": \"^19.2.17\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: '@types/react-dom': '^19.2.3'",
+      "snippet": "\"@types/react-dom\": \"^19.2.3\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: '@vitejs/plugin-react': '^6.0.3'",
+      "snippet": "\"@vitejs/plugin-react\": \"^6.0.3\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: 'autoprefixer': '^10.5.2'",
+      "snippet": "\"autoprefixer\": \"^10.5.2\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: 'oxlint': '^1.71.0'",
+      "snippet": "\"oxlint\": \"^1.71.0\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: 'postcss': '^8.5.16'",
+      "snippet": "\"postcss\": \"^8.5.16\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: 'tailwindcss': '^4.3.2'",
+      "snippet": "\"tailwindcss\": \"^4.3.2\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: 'typescript': '~6.0.2'",
+      "snippet": "\"typescript\": \"~6.0.2\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: 'vite': '^8.1.1'",
+      "snippet": "\"vite\": \"^8.1.1\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "DependencyAuditor",
+      "rule_id": "DEP-003",
+      "severity": "LOW",
+      "file_path": "frontend/package.json",
+      "line_number": 1,
+      "description": "Flexible/Unpinned Node.js dependency version in devDependencies: '@tailwindcss/vite': '^4.0.0-beta.8'",
+      "snippet": "\"@tailwindcss/vite\": \"^4.0.0-beta.8\"",
+      "recommendation": "Lock package version without '^' or '~' wildcards in production manifests."
+    },
+    {
+      "scanner": "CodeScanner (Firestore Rules)",
+      "rule_id": "COD-013",
+      "severity": "CRITICAL",
+      "file_path": "firestore.rules",
+      "line_number": 11,
+      "description": "Permissive Firestore security rule: unconditionally allowing operations ('if true;')",
+      "snippet": "allow read, write: if true;",
+      "recommendation": "Enforce authentication and resource checks (e.g. 'if request.auth != null;')."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-005",
+      "severity": "LOW",
+      "file_path": "smoke_test_gemini.py",
+      "line_number": 38,
+      "description": "Gemini GenerativeModel instantiated without explicit safety_settings",
+      "snippet": "model = genai.GenerativeModel(target_model)",
+      "recommendation": "Explicitly configure safety_settings (e.g., HARASSMENT, HATE_SPEECH thresholds) on GenerativeModel initialization."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-005",
+      "severity": "LOW",
+      "file_path": "pipeline.py",
+      "line_number": 155,
+      "description": "Gemini GenerativeModel instantiated without explicit safety_settings",
+      "snippet": "model = genai.GenerativeModel(settings.agent_model)",
+      "recommendation": "Explicitly configure safety_settings (e.g., HARASSMENT, HATE_SPEECH thresholds) on GenerativeModel initialization."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-003",
+      "severity": "MEDIUM",
+      "file_path": "pipeline.py",
+      "line_number": 176,
+      "description": "Unsafe JSON parsing of LLM response without try/except handling",
+      "snippet": "result = json.loads(response.text)",
+      "recommendation": "Wrap model JSON parsing in a try/except block to gracefully handle malformed or injected model outputs."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-005",
+      "severity": "LOW",
+      "file_path": "backend/pipeline.py",
+      "line_number": 150,
+      "description": "Gemini GenerativeModel instantiated without explicit safety_settings",
+      "snippet": "model = genai.GenerativeModel(settings.agent_model)",
+      "recommendation": "Explicitly configure safety_settings (e.g., HARASSMENT, HATE_SPEECH thresholds) on GenerativeModel initialization."
+    },
+    {
+      "scanner": "AIGuardrailsChecker",
+      "rule_id": "AI-003",
+      "severity": "MEDIUM",
+      "file_path": "backend/pipeline.py",
+      "line_number": 171,
+      "description": "Unsafe JSON parsing of LLM response without try/except handling",
+      "snippet": "result = json.loads(response.text)",
+      "recommendation": "Wrap model JSON parsing in a try/except block to gracefully handle malformed or injected model outputs."
+    }
+  ]
+}
