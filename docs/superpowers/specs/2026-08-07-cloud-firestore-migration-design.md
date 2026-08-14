@@ -1,6 +1,6 @@
 # Design: Real Cloud Firestore Migration (Phase 1 of the GCP Backend Move)
 
-**Status:** Approved for planning
+**Status:** Implemented (code changes only — see this spec's "Provisioning Runbook" for the still-manual GCP project setup steps)
 **Date:** 2026-08-07
 **Related:** [docs/google_cloud_migration_roadmap.md](../../google_cloud_migration_roadmap.md), [docs/firestore_feasibility_study.md](../../firestore_feasibility_study.md)
 
