@@ -323,6 +323,27 @@ implementation plan turns these into concrete, testable tasks.
      --role="roles/datastore.user"
    # + roles/secretmanager.secretAccessor on each of the 4 secrets individually
    ```
+   > ⚠️ **Pre-flight blocker, discovered 2026-08-15, not yet fixed:**
+   > `backend/requirements.txt` pins no version for `google-antigravity` or
+   > `google-generativeai`. A fresh install today resolves
+   > `google-antigravity==0.1.12` (needs `protobuf>=7.35.0` at runtime — its
+   > generated code is gencode 7.35.0) against
+   > `google-ai-generativelanguage==0.6.15` (a transitive dep of
+   > `google-generativeai`, hard-capped at `protobuf<6.0.0dev`) and
+   > `grpcio-status` (capped at `protobuf<6.0dev`) — an unresolvable range
+   > conflict. `pip` silently installs `protobuf==5.29.6` (satisfying the
+   > caps, violating antigravity's floor), so the container builds cleanly
+   > but crashes on start with
+   > `google.protobuf.runtime_version.VersionError: ... gencode 7.35.0
+   > runtime 5.29.6`, before binding to `$PORT`. Confirmed pre-existing (not
+   > caused by this branch — `backend/requirements.txt`'s lack of pins
+   > predates Phase 2) and confirmed NOT fixable by simply pinning
+   > `protobuf` up (breaks `google-ai-generativelanguage`/`grpcio-status`)
+   > or down (breaks `google-antigravity`). **Do not run step 5 until this
+   > is resolved** — likely needs a newer `google-generativeai` release
+   > that drops the old protobuf cap, or dropping/replacing whichever of
+   > the two packages is less load-bearing. Track as separate follow-up
+   > work, not part of this plan.
 5. Deploy the backend from source (Cloud Build handles the container build —
    no local Docker needed). `--source=backend` makes `backend/` the build
    context, so it finds `backend/Dockerfile` as that context's `Dockerfile`:
