@@ -128,16 +128,26 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt ./backend/requirements.txt
+RUN pip install --no-cache-dir -r backend/requirements.txt
 
-COPY . .
+COPY . ./backend/
 
 # Cloud Run sets $PORT at runtime (defaults to 8080); bind to it explicitly
 # rather than hardcoding, so this also works unchanged if Cloud Run's default
-# ever changes.
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8080}"]
+# ever changes. Run as the `backend` package (not `main:app` directly) so
+# main.py's `from backend.agents...` root-relative imports resolve — this
+# mirrors start.sh's working invocation (`python -m uvicorn backend.main:app`
+# from the repo root); /app is that "repo root" inside the image.
+CMD ["sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8080}"]
 ```
+
+> **Revision note:** the snippet above reflects the fixed layout (a final
+> whole-branch review caught that the first version — `COPY . .` directly
+> into `/app`, `CMD uvicorn main:app` — built a container that crashed on
+> start with `ModuleNotFoundError: No module named 'backend'`, since
+> `main.py` imports root-relative through a `backend` package). The real
+> `backend/Dockerfile` is the source of truth if this ever drifts again.
 
 ### 2. `backend/.dockerignore` (new)
 
