@@ -46,8 +46,6 @@ help:
 
 # Installation Target
 install:
-	@echo "Installing root dependencies using $(PIP)..."
-	$(PIP) install -r requirements.txt
 	@echo "Installing backend dependencies using $(PIP)..."
 	$(PIP) install -r backend/requirements.txt
 	@echo "Installing frontend packages..."
