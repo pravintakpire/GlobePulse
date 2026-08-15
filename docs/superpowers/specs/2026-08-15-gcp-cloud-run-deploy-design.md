@@ -332,7 +332,7 @@ implementation plan turns these into concrete, testable tasks.
      --region=asia-south1 \
      --project=globepulse-ai \
      --service-account=globepulse-backend@globepulse-ai.iam.gserviceaccount.com \
-     --set-env-vars=FIRESTORE_PROJECT_ID=globepulse-ai,ALLOWED_ORIGINS=https://globepulseai.com,https://www.globepulseai.com \
+     --set-env-vars="^##^FIRESTORE_PROJECT_ID=globepulse-ai##ALLOWED_ORIGINS=https://globepulseai.com,https://www.globepulseai.com" \
      --set-secrets=GEMINI_API_KEY=gemini-api-key:latest,ADMIN_KEY=admin-key:latest,RAZORPAY_KEY_ID=razorpay-key-id:latest,RAZORPAY_KEY_SECRET=razorpay-key-secret:latest \
      --allow-unauthenticated
    ```
@@ -350,9 +350,19 @@ implementation plan turns these into concrete, testable tasks.
      --region=asia-south1 \
      --project=globepulse-ai \
      --port=8080 \
-     --build-env-vars=VITE_API_URL=https://api.globepulseai.com,VITE_WS_URL=wss://api.globepulseai.com \
+     --set-build-env-vars=VITE_API_URL=https://api.globepulseai.com,VITE_WS_URL=wss://api.globepulseai.com \
      --allow-unauthenticated
    ```
+   Note: `gcloud run deploy --source` build env vars are documented primarily
+   for buildpacks builds; confirm during the actual deploy that they're
+   forwarded as Docker `--build-arg` for this Dockerfile-based build (check
+   the Cloud Build log for `VITE_API_URL` reaching the build step). If they
+   aren't forwarded, the frontend will build successfully but silently fall
+   back to `window.location.hostname:8000` in the bundle — a broken
+   production frontend that looks like a successful deploy. Fallback if
+   needed: build locally with `docker build --build-arg VITE_API_URL=... -f
+   frontend/Dockerfile frontend`, push to Artifact Registry, and deploy with
+   `--image` instead of `--source`.
 7. Verify domain ownership with Google (required before domain mapping will
    succeed) via Search Console or `gcloud domains verify globepulseai.com`.
 8. Create the domain mappings:

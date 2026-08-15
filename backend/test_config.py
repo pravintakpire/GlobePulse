@@ -10,7 +10,13 @@ import config
 
 class TestGetAllowedOrigins(unittest.TestCase):
     def test_default_matches_todays_localhost_list(self):
-        origins = config.get_allowed_origins()
+        default_origins = (
+            "http://localhost:5173,http://localhost:5174,"
+            "http://127.0.0.1:5173,http://127.0.0.1:5174,"
+            "http://localhost:8000,http://127.0.0.1:8000"
+        )
+        with patch.object(config.settings, "allowed_origins", default_origins):
+            origins = config.get_allowed_origins()
 
         self.assertEqual(origins, [
             "http://localhost:5173",
