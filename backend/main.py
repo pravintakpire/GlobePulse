@@ -32,10 +32,11 @@ def startup_event():
     database.seed_demo_users()
     database.seed_demo_feedback()
 
-# Setup CORS to allow React Frontend
+# Setup CORS to allow React Frontend (including mobile LAN IPs)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=config.get_allowed_origins(),
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.\d{1,3}\.\d{1,3}\.\d{1,3})(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
