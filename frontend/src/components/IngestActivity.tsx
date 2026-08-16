@@ -19,10 +19,13 @@ export const IngestActivity: React.FC = () => {
   const [showActivity, setShowActivity] = useState(false);
   const socketRef = useRef<WebSocket | null>(null);
   const logRef = useRef<HTMLPreElement | null>(null);
+  const isUnmountingRef = useRef(false);
 
   useEffect(() => {
+    isUnmountingRef.current = false;
     connectWebSocket();
     return () => {
+      isUnmountingRef.current = true;
       if (socketRef.current) {
         socketRef.current.close();
       }
@@ -40,11 +43,14 @@ export const IngestActivity: React.FC = () => {
       const data: ActivityEvent = JSON.parse(event.data);
 
       if (data.type === 'start') {
-        setEvents([]);
         setShowActivity(true);
       }
 
-      setEvents((prev) => [...prev, data]);
+      // Cap the rolling log instead of clearing it on every ticker's
+      // 'start' event -- a multi-ticker run fires one 'start' per ticker,
+      // and clearing here would wipe out earlier tickers' activity lines,
+      // leaving only the last ticker's output visible.
+      setEvents((prev) => [...prev, data].slice(-200));
 
       if (logRef.current) {
         logRef.current.scrollTop = logRef.current.scrollHeight;
@@ -52,6 +58,12 @@ export const IngestActivity: React.FC = () => {
     };
 
     ws.onclose = () => {
+      // Don't reconnect if the close was triggered by our own cleanup
+      // (component unmount, e.g. a dashboard tab switch) -- IngestActivity
+      // mounts/unmounts repeatedly, unlike AgentChat which mounts once for
+      // the app's lifetime, so scheduling a reconnect here unconditionally
+      // would leak one permanent orphaned WebSocket per unmount.
+      if (isUnmountingRef.current) return;
       console.log('Ingest activity WebSocket disconnected. Reconnecting...');
       setTimeout(connectWebSocket, 3000);
     };
