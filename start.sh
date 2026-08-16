@@ -83,8 +83,19 @@ for i in {1..15}; do
   sleep 1
 done
 
-# Detect Local Network IP
-LOCAL_IP=$(ip -4 addr show | grep -oP '(?<=inet\s)\d+(\.\d+){3}' | grep -v '127.0.0.1' | grep -v '172\.' | head -n 1)
+# Detect Local Network IP (portable across macOS/Linux -- avoids relying on
+# the Linux-only `ip` command or a hardcoded interface name; opens no real
+# connection, just asks the OS which local address it would route through).
+LOCAL_IP=$(python3 -c "
+import socket
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(('8.8.8.8', 80))
+    print(s.getsockname()[0])
+    s.close()
+except Exception:
+    pass
+" 2>/dev/null)
 [ -z "$LOCAL_IP" ] && LOCAL_IP="localhost"
 
 echo ""

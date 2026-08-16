@@ -529,7 +529,7 @@ def save_feedback(feedback_item: dict) -> None:
     except Exception as e:
         logger.error(f"Error saving feedback to local file: {e}")
 
-def seed_demo_feedback(force_reset: bool = True):
+def seed_demo_feedback(force_reset: bool = False):
     """Seeds default sample feedback entries into local feedback.json and Firestore if empty or forced."""
     sample_feedbacks = [
         {
@@ -615,25 +615,28 @@ def seed_demo_feedback(force_reset: bool = True):
     ]
 
     filepath = get_feedback_file_path()
-    try:
-        dir_name = os.path.dirname(filepath)
-        if dir_name:
-            os.makedirs(dir_name, exist_ok=True)
-        with open(filepath, 'w') as f:
-            json.dump(sample_feedbacks, f, indent=4)
-        logger.info("Successfully seeded realistic demo feedbacks in local feedback.json.")
-    except Exception as e:
-        logger.error(f"Error seeding demo feedbacks locally: {e}")
+    if force_reset or not os.path.exists(filepath):
+        try:
+            dir_name = os.path.dirname(filepath)
+            if dir_name:
+                os.makedirs(dir_name, exist_ok=True)
+            with open(filepath, 'w') as f:
+                json.dump(sample_feedbacks, f, indent=4)
+            logger.info("Successfully seeded realistic demo feedbacks in local feedback.json.")
+        except Exception as e:
+            logger.error(f"Error seeding demo feedbacks locally: {e}")
 
     if db is not None:
         try:
             coll = db.collection("feedback")
-            batch = db.batch()
-            for fb in sample_feedbacks:
-                doc_ref = coll.document(fb["id"])
-                batch.set(doc_ref, fb)
-            batch.commit()
-            logger.info("Successfully seeded realistic demo feedbacks in Firestore.")
+            existing = list(coll.limit(1).stream())
+            if force_reset or not existing:
+                batch = db.batch()
+                for fb in sample_feedbacks:
+                    doc_ref = coll.document(fb["id"])
+                    batch.set(doc_ref, fb)
+                batch.commit()
+                logger.info("Successfully seeded realistic demo feedbacks in Firestore.")
         except Exception as e:
             logger.error(f"Error seeding demo feedbacks in Firestore: {e}")
 
