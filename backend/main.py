@@ -63,7 +63,11 @@ async def broadcast_ingest_activity(event: dict):
     dead connection break the broadcast for everyone else.
     """
     dead = set()
-    for ws in _ingest_websockets:
+    # Iterate a snapshot, not the live set -- a client connecting or
+    # disconnecting mid-broadcast mutates _ingest_websockets concurrently,
+    # which would otherwise raise "Set changed size during iteration" and
+    # silently abort the broadcast partway through.
+    for ws in list(_ingest_websockets):
         try:
             await ws.send_json(event)
         except Exception:
@@ -441,6 +445,15 @@ def get_stock_history_api(ticker: str = Query(...), period: str = Query("30d")):
 
 @app.post("/api/pipeline/run")
 def trigger_pipeline(background_tasks: BackgroundTasks, ticker: Optional[str] = None, admin_key: Optional[str] = Query(None)):
+    if ticker and ticker not in database.load_all_watchlist_tickers():
+        # Unrecognized ticker string: the cooldown dict alone doesn't stop a
+        # scripted caller from bypassing rate-limiting by varying the ticker
+        # on every request (each new string gets its own fresh cooldown
+        # entry). Only a ticker that's actually on some user's watchlist
+        # gets the no-admin-key fast path; anything else falls through to
+        # the same admin-gated path as an unscoped run.
+        ticker = None
+
     if ticker:
         # Scoped, single-ticker run: bounded cost (~5 articles), no
         # admin_key required -- it's a legitimate user action, not an
