@@ -1,5 +1,7 @@
 import os
 import sys
+import time
+import asyncio
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -152,6 +154,57 @@ class TestAnalyzeSentimentStillAlwaysSucceeds(unittest.IsolatedAsyncioTestCase):
         result = json.loads(result_json_str)
         self.assertEqual(result["overall_sentiment"], 0.0)
         self.assertIsNone(result["layoffs"])
+
+
+class TestRunPipelineDoesNotBlockEventLoop(unittest.IsolatedAsyncioTestCase):
+    """Regression test for Critical #2: run_pipeline's blocking I/O (Firestore
+    reads/writes, requests.get-based fetch/scrape) must execute via
+    asyncio.to_thread so it doesn't monopolize the event loop -- and
+    therefore every other concurrent request/websocket -- for the run's
+    duration.
+
+    This is a real concurrency test rather than a mock-of-asyncio.to_thread
+    test: it runs a slow/blocking fake fetch_news_items concurrently with a
+    fast asyncio.sleep-based task via asyncio.gather, and asserts the fast
+    task completes promptly instead of being queued behind the blocking
+    call. A true concurrency test was practical here (no real network/
+    Firestore access needed -- fetch_news_items and the existing-URLs load
+    are both mockable single call sites) and is more convincing than
+    asserting asyncio.to_thread was merely called, since it also protects
+    against a future regression that swaps in asyncio.to_thread correctly
+    for the wrong callable or reintroduces a blocking call elsewhere.
+    """
+
+    async def test_fast_concurrent_task_is_not_delayed_by_blocking_fetch(self):
+        def slow_fetch(ticker, limit=5):
+            time.sleep(0.3)  # simulates blocking requests.get() I/O
+            return []  # no items -> run_pipeline finishes quickly after this call
+
+        fast_task_elapsed = None
+
+        async def fast_task(start: float):
+            nonlocal fast_task_elapsed
+            await asyncio.sleep(0.05)
+            fast_task_elapsed = time.monotonic() - start
+
+        with patch("pipeline.fetch_news_items", side_effect=slow_fetch), \
+             patch("pipeline._load_existing_urls_sync", return_value=set()):
+            start = time.monotonic()
+            await asyncio.gather(
+                pipeline.run_pipeline("TSLA"),
+                fast_task(start),
+            )
+
+        self.assertIsNotNone(fast_task_elapsed)
+        # The fast task's 0.05s sleep must resolve promptly -- well below
+        # the slow fetch's 0.3s blocking duration -- proving the blocking
+        # call ran off the event loop rather than stalling it.
+        self.assertLess(
+            fast_task_elapsed, 0.2,
+            "fast concurrent task was delayed -- run_pipeline's blocking "
+            "fetch_news_items call appears to be running on the event loop "
+            "instead of via asyncio.to_thread",
+        )
 
 
 if __name__ == "__main__":
